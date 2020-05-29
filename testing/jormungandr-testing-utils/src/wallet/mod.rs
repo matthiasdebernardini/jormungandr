@@ -23,9 +23,6 @@ use jormungandr_lib::{
 
 use chain_addr::Discrimination;
 use chain_crypto::{Ed25519, Signature};
-use rand_core::{CryptoRng, RngCore};
-use thiserror::Error;
-
 pub use chain_impl_mockchain::{
     block::Block,
     certificate::{PoolId, SignedCertificate},
@@ -36,6 +33,8 @@ pub use chain_impl_mockchain::{
     milli::Milli,
     transaction::{TransactionBindingAuthData, UnspecifiedAccountIdentifier},
 };
+use rand_core::{CryptoRng, RngCore};
+use thiserror::Error;
 
 #[derive(Error, Debug)]
 pub enum WalletError {
@@ -89,6 +88,13 @@ impl Wallet {
         let mut delegation = delegation::Wallet::generate(rng);
         delegation.generate_new_signing_key(delegation_identifier.clone());
         Wallet::Delegation(delegation)
+    }
+
+    pub fn save_to<W: std::io::Write>(&self, w: W) -> std::io::Result<()> {
+        match self {
+            Wallet::Account(account) => account.save_to(w),
+            _ => unimplemented!(),
+        }
     }
 
     pub fn address(&self) -> Address {
