@@ -33,12 +33,7 @@ impl Explorer {
 
     pub fn get_last_block(&self) -> Result<ExplorerLastBlock, ExplorerError> {
         let query = ExplorerLastBlock::query();
-        let request_response = self.client.run(query).map_err(ExplorerError::ClientError)?;
-        println!("{:?}", request_response);
-        let text = request_response
-            .text()
-            .map_err(client::GraphQLClientError::ReqwestError)?;
-        println!("{:?}", text);
+        let text = self.run_query(query)?;
         let response: GraphQLResponse =
             serde_json::from_str(&text).map_err(ExplorerError::SerializationError)?;
         ExplorerLastBlock::try_from(response).map_err(|e| e.into())
@@ -46,12 +41,7 @@ impl Explorer {
 
     pub fn get_transaction(&self, hash: Hash) -> Result<ExplorerTransaction, ExplorerError> {
         let query = ExplorerTransaction::query_by_id(hash);
-        let request_response = self.client.run(query).map_err(ExplorerError::ClientError)?;
-        println!("{:?}", request_response);
-        let text = request_response
-            .text()
-            .map_err(client::GraphQLClientError::ReqwestError)?;
-        println!("{:?}", text);
+        let text = self.run_query(query)?;
         let response: GraphQLResponse =
             serde_json::from_str(&text).map_err(ExplorerError::SerializationError)?;
         ExplorerTransaction::try_from(response).map_err(|e| e.into())
@@ -59,17 +49,18 @@ impl Explorer {
 
     pub fn get_stake_pool(&self, id: Hash) -> Result<ExplorerStakePool, ExplorerError> {
         let query = ExplorerStakePool::query_by_id(id);
-        let request_response = self
-            .client
-            .run(query)
-            .map_err(|e| ExplorerError::ClientError(e))?;
-        println!("{:?}", request_response);
-        let text = request_response
-            .text()
-            .map_err(|e| client::GraphQLClientError::ReqwestError(e))?;
-        println!("{:?}", text);
+        let text = self.run_query(query)?;
         let response: GraphQLResponse =
             serde_json::from_str(&text).map_err(|e| ExplorerError::SerializationError(e))?;
         ExplorerStakePool::try_from(response).map_err(|e| e.into())
+    }
+
+    fn run_query(&self, query: GraphQLQuery) -> Result<String, client::GraphQLClientError> {
+        let request_response = self.client.run(query)?;
+        let text = request_response
+            .text()
+            .map_err(|e| client::GraphQLClientError::ReqwestError(e))?;
+        println!("GraphQLResponse: {:#?}", text);
+        Ok(text)
     }
 }

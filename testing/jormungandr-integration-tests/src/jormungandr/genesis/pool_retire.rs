@@ -20,7 +20,7 @@ pub fn test_pool_retire() {
     )
     .unwrap();
 
-    startup::sleep_till_next_epoch(10, &jormungandr.config);
+    startup::sleep_till_next_epoch(10, &jormungandr.block0_configuration());
 
     let stake_pool = stake_pools.iter().cloned().next().unwrap();
     let stake_pool_id = Hash::from_str(&stake_pool.id().to_string()).unwrap();
@@ -41,7 +41,7 @@ pub fn test_pool_retire() {
         .encode();
 
     jcli_wrapper::assert_transaction_in_block(&transaction, &jormungandr);
-    startup::sleep_till_epoch(10, 10, &jormungandr.config);
+    startup::sleep_till_epoch(10, 10, &jormungandr.block0_configuration());
 
     explorer_stake_pool = jormungandr
         .explorer()
