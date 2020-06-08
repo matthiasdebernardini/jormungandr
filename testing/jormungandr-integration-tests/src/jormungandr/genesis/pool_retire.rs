@@ -53,6 +53,7 @@ pub fn test_pool_retire() {
 }
 
 #[test]
+#[should_panic]
 pub fn test_retire_the_only_one_pool() {
     let mut owner = startup::create_new_account_address();
 
