@@ -224,10 +224,14 @@ impl JormungandrLogger {
             == count)
     }
 
-    pub fn print_error_and_invalid_logs(&self) {
+    pub fn print_error_and_invalid_logs(&self, alias: Option<String>) {
         let error_lines: Vec<_> = self.get_lines_with_error_and_invalid().collect();
         if !error_lines.is_empty() {
-            println!("Error lines:");
+            match alias {
+                Some(alias) => println!("Error lines ({}):", alias),
+                None => println!("Error lines:"),
+            }
+
             for line in error_lines {
                 println!("{}", line);
             }
