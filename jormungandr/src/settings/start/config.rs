@@ -63,6 +63,7 @@ pub struct Rest {
     pub tls: Option<Tls>,
     /// Enables CORS if provided
     pub cors: Option<Cors>,
+    pub notifier: Option<Notifier>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -86,6 +87,13 @@ pub struct Cors {
 
 #[derive(Debug, Clone, Default, Serialize, PartialEq, Eq)]
 pub struct CorsOrigin(String);
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct Notifier {
+    /// Limit on the number of simultaneous connections.
+    /// If not specified, an internal default limit is used.
+    pub max_connections: Option<usize>,
+}
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
