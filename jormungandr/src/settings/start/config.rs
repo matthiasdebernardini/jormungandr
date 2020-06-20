@@ -103,7 +103,6 @@ pub struct P2pConfig {
     /// no longer needed.
     ///
     /// TODO: To remove once we can afford a breaking change in the config
-    #[serde(default, skip)]
     pub public_id: Option<poldercast::Id>,
 
     /// the rendezvous points for the peer to connect to in order to initiate
